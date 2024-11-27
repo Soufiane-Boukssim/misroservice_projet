@@ -4,7 +4,7 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @Builder
-public class CreateProductDto {
+public class ProductDtoWithoutId {
     private String name;
     private BigDecimal unitPrice;
     private String description;

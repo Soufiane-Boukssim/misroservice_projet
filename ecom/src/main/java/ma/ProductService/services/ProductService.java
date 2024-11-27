@@ -2,6 +2,7 @@ package ma.ProductService.services;
 
 import lombok.RequiredArgsConstructor;
 import ma.ProductService.dto.ProductDto;
+import ma.ProductService.dto.ProductDtoWithoutId;
 import ma.ProductService.entities.Product;
 import ma.ProductService.exceptions.ProductNotFoundException;
 import ma.ProductService.mappers.ProductMapper;
@@ -38,8 +39,8 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public ProductDto createProduct(ProductDto productDtoRequest) {
-        Product product=productMapper.fromProductDtoToProduct(productDtoRequest);
+    public ProductDto createProduct(ProductDtoWithoutId productDtoWithoutId) {
+        Product product=productMapper.fromProductDtoWithoutIdToProduct(productDtoWithoutId);
         product=productRepository.save(product);
         return productMapper.productToProductDto(product);
     }
@@ -56,17 +57,10 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public ProductDto updateProduct(Long id, ProductDto productDtoRequest) {
-        Product product= productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product not found with id: " + id));
-        product=Product.builder()
-                .id(product.getId())  // Garder l'ID existant
-                .name(productDtoRequest.getName())
-                .unitPrice(productDtoRequest.getUnitPrice())
-                .description(productDtoRequest.getDescription())
-                .brand(productDtoRequest.getBrand())
-                .stockQuantity(productDtoRequest.getStockQuantity())
-                .category(productDtoRequest.getCategory())
-                .build();
+    public ProductDto updateProduct(Long id, ProductDtoWithoutId productDtoWithoutId) {
+        productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product not found with id: " + id));
+        Product product=productMapper.fromProductDtoWithoutIdToProduct(productDtoWithoutId);
+        product.setId(id);
         product = productRepository.save(product);
         return productMapper.productToProductDto(product);
     }
